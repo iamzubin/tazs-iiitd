@@ -16,6 +16,9 @@ from models import *
 
 db.create_all()
 
+user = User('nigga', 'Test Nigga')
+db.session.add(user)
+db.session.commit()
 
 if __name__ == '__main__':
     app.run()

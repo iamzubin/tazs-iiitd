@@ -1,11 +1,13 @@
 import os
 import cv2
 from app import app, db
+from models import Face
 from flask import session, redirect, url_for, render_template, abort, request, flash, Response
 from face_recognition import face_encodings
 from werkzeug.utils import secure_filename
 from face_dec import get_face
 import pickle
+import json
 
 
 
@@ -25,6 +27,8 @@ def get_frames(user_id):
         else:
             frame = frame[:, :, ::-1]
             face_encodings = get_face(frame)
+            print(face_encodings)
+            print(json.dumps(face_encodings))
             if face_encodings:
                 face = Face(user_id, face_encodings)
                 db.session.add(face)
