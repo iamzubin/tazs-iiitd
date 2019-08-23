@@ -1,13 +1,14 @@
 import os
 import cv2
 from app import app, db
-from models import Face
+from models import Face, User
 from flask import session, redirect, url_for, render_template, abort, request, flash, Response
 from face_recognition import face_encodings
 from werkzeug.utils import secure_filename
 from face_dec import get_face
 import pickle
-import json
+from datetime import datetime
+from io import BytesIO
 
 
 
@@ -23,17 +24,26 @@ def get_frames(user_id):
     while True:
         rval, frame = video.read()
         if not rval:
+            db.session.commit()
             break
         else:
-            frame = frame[:, :, ::-1]
-            face_encodings = get_face(frame)
-            print(face_encodings)
-            print(json.dumps(face_encodings))
-            if face_encodings:
-                face = Face(user_id, face_encodings)
+            new_frame = frame[:, :, ::-1]
+            face_encodings = get_face(new_frame)
+            time_var = datetime.now().strftime("%H:%M:%S")
+            f = BytesIO()
+            pickle.dump(face_encodings, f)
+            if face_encodings is not None:
+                face = Face(user_id, f.getbuffer())
                 db.session.add(face)
-                db.commit()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' +  cv2.imencode('.jpg', frame)[1].tostring() + b'\r\n')
 
+@app.route('/')
+def index():
+    user = User('nigga', 'Test Nigga')
+    db.session.add(user)
+    db.session.commit()
+    return 'okay'
 
 @app.route('/record-face/<user_id>')
 def add_face(user_id):
