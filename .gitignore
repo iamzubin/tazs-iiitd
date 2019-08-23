@@ -106,4 +106,4 @@ venv.bak/
 
 
 # node
-node-devel/node_modules/
+nodeserver/node_modules/
