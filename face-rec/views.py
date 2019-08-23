@@ -6,8 +6,8 @@ from flask import session, redirect, url_for, render_template, abort, request, f
 from face_recognition import face_encodings
 from werkzeug.utils import secure_filename
 from face_dec import get_face
+from face_match import give_match
 import pickle
-from datetime import datetime
 from io import BytesIO
 
 
@@ -29,7 +29,6 @@ def get_frames(user_id):
         else:
             new_frame = frame[:, :, ::-1]
             face_encodings = get_face(new_frame)
-            time_var = datetime.now().strftime("%H:%M:%S")
             f = BytesIO()
             pickle.dump(face_encodings, f)
             if face_encodings is not None:
@@ -47,7 +46,7 @@ def index():
 
 @app.route('/record-face/<user_id>')
 def add_face(user_id):
-    return Response(get_frames(user_id),mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(get_frames(user_id), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/signup')
 def signup():
@@ -60,9 +59,23 @@ def camera():
 
 
 def detect_person():
-    pass
+    while True:
+        rval, frame = video.read()
+        if not rval:
+            break
+        else:
+            new_frame = frame[:, :, ::-1]
+            people = give_match(new_frame)
+            print(people)
+            # f = BytesIO()
+            # pickle.dump(face_encodings, f)
+            # if face_encodings is not None:
+            #     face = Face(user_id, f.getbuffer())
+            #     db.session.add(face)
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' +  cv2.imencode('.jpg', frame)[1].tostring() + b'\r\n')
 
 
 @app.route('/detect')
 def detect_face():
-    return Response(detect_person(),mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(detect_person(), mimetype='multipart/x-mixed-replace; boundary=frame')
