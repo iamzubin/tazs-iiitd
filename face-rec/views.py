@@ -13,13 +13,13 @@ from io import BytesIO
 
 
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'mp4']
+video = cv2.VideoCapture(0)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 def get_frames(user_id):
-    video = cv2.VideoCapture(0)
     """Video streaming generator function."""
     while True:
         rval, frame = video.read()
@@ -52,3 +52,17 @@ def add_face(user_id):
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
+
+
+@app.route('/camera')
+def camera():
+    return render_template('camera.html')
+
+
+def detect_person():
+    pass
+
+
+@app.route('/detect')
+def detect_face():
+    return Response(detect_person(),mimetype='multipart/x-mixed-replace; boundary=frame')
