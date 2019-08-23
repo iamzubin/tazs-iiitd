@@ -3,7 +3,7 @@ import face_recognition
 
 # Load the jpg file into a numpy array
 def get_face(image):
-	face_locations = face_recognition.face_locations(image)
+	face_locations = face_recognition.face_locations(image, model="cnn")
 	if face_locations:
 		top, right, bottom, left = face_locations[0]
 		#print("A face is located at pixel location Top: {}, Left: {}, Bottom: {}, Right: {}".format(top, left, bottom, right))
