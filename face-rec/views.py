@@ -13,7 +13,7 @@ from io import BytesIO
 
 
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'mp4']
-video = cv2.VideoCapture(0)
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -21,10 +21,10 @@ def allowed_file(filename):
 
 def get_frames(user_id):
     """Video streaming generator function."""
+    video = cv2.VideoCapture(0)
     while True:
         rval, frame = video.read()
         if not rval:
-            db.session.commit()
             break
         else:
             new_frame = frame[:, :, ::-1]
@@ -34,6 +34,7 @@ def get_frames(user_id):
             if face_encodings is not None:
                 face = Face(user_id, f.getbuffer())
                 db.session.add(face)
+                db.session.commit()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' +  cv2.imencode('.jpg', frame)[1].tostring() + b'\r\n')
 
@@ -59,6 +60,7 @@ def camera():
 
 
 def detect_person():
+    video = cv2.VideoCapture(0)
     while True:
         rval, frame = video.read()
         if not rval:
