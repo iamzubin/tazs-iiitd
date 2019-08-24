@@ -26,12 +26,14 @@ def get_frames(user_id):
             break
         else:
             new_frame = frame[:, :, ::-1]
-            face_encodings = get_face(new_frame)
+            locations, face_encodings = get_face(new_frame)
             f = pickle.dumps(face_encodings)
             if face_encodings is not None:
                 face = Face(user_id, f)
                 db.session.add(face)
                 db.session.commit()
+                top, right, bottom, left = face_locations[0]
+                cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' +  cv2.imencode('.jpg', frame)[1].tostring() + b'\r\n')
 
@@ -63,6 +65,7 @@ def detect_person():
             new_frame = frame[:, :, ::-1]
             face_locations, people = give_match(new_frame)
             if people:
+                print(people.username)
                 person = User.get_by_id(people[0])
                 top, right, bottom, left = face_locations[0]
                 cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
@@ -83,7 +86,6 @@ def signup():
     form = LoginForm()
     if form.validate_on_submit():
         username, password = form.username.data, form.password.data
-        print(username, password)
         user = User.get_by_username(username)
         if user and user.password == password:
             return redirect(url_for('dashboard'))

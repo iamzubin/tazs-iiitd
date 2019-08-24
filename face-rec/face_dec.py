@@ -9,6 +9,6 @@ def get_face(image):
 		#print("A face is located at pixel location Top: {}, Left: {}, Bottom: {}, Right: {}".format(top, left, bottom, right))
 		face_image = image[top:bottom, left:right]
 		face_encoding = face_recognition.face_encodings(face_image)
-		return face_encoding[0]
+		return face_locations[0], face_encoding[0]
 	else:
 		return None
