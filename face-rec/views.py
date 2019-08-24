@@ -3,12 +3,13 @@ import cv2
 from app import app, db
 from models import Face, User
 from forms import LoginForm
-from flask import session, redirect, url_for, render_template, abort, request, flash, Response
+from flask import session, redirect, url_for, render_template, abort, request, flash, Response, send_from_directory
 from face_recognition import face_encodings
 from werkzeug.utils import secure_filename
 from face_dec import get_face
 from face_match import give_match
 import pickle
+
 
 
 
@@ -89,7 +90,7 @@ def signup():
 
 @app.route('/dashboard')
 def dashboard():
-    pass
+    return render_template("admin.html")
 
 
 @app.route('/assets/<path:path>')
