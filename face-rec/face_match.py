@@ -5,9 +5,14 @@ import os
 from models import Face
 import pickle
 
-all_faces = Face.query.all()
-known_faces = [pickle.loads(face.face_encoding) for face in all_faces]
-known_faces_id = [face.user.id for face in all_faces]
+
+def load_faces():
+    global all_faces, known_faces, known_faces_id
+    all_faces = Face.query.all()
+    known_faces = [pickle.loads(face.face_encoding) for face in all_faces]
+    known_faces_id = [face.user.id for face in all_faces]
+
+load_faces()
 
 
 def give_match(image_vector):

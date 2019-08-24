@@ -1,14 +1,16 @@
 import os
 import cv2
 from app import app, db
-from models import Face, User
+from models import Face, User, Check
 from forms import LoginForm
 from flask import session, redirect, url_for, render_template, abort, request, flash, Response, send_from_directory
 from face_recognition import face_encodings
 from werkzeug.utils import secure_filename
 from face_dec import get_face
-from face_match import give_match
+from face_match import give_match, load_faces
 import pickle
+from datetime import datetime, timedelta
+
 
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'mp4']
 
@@ -23,6 +25,7 @@ def get_frames(user_id):
     while True:
         rval, frame = video.read()
         if not rval:
+            load_faces()
             break
         else:
             new_frame = frame[:, :, ::-1]
@@ -51,12 +54,17 @@ def add_face(user_id):
     return Response(get_frames(user_id), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-@app.route('/camera')
-def camera():
-    return render_template('camera.html')
+@app.route('/camera-in')
+def camera_in():
+    return render_template('camera_in.html')
 
 
-def detect_person():
+@app.route('/camera-out')
+def camera_out():
+    return render_template('camera_out.html')
+
+
+def detect_person(status):
     video = cv2.VideoCapture(0)
     while True:
         rval, frame = video.read()
@@ -69,17 +77,44 @@ def detect_person():
                 person = User.get_by_id(people[0])
                 print(person.username)
                 top, right, bottom, left = face_locations[0]
-                cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
-                cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+                check_time = datetime.now()
+                time_diff = check_time - timedelta(seconds=20)
                 font = cv2.FONT_HERSHEY_DUPLEX
-                cv2.putText(frame, 'Hi!' + person.username, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+                if status == 'in':
+                    is_checked_in = Check.query.filter(Check.check_in_time > time_diff).first()
+                    if not is_checked_in:
+                        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+                        cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+                        check = Check(person.id, datetime.now(), 'Delhi')
+                        db.session.add(check)
+                        db.session.commit()
+                    else:
+                        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 255, 0), cv2.FILLED)
+                        cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+                    cv2.putText(frame, 'Hi! ' + person.username, (left + 6, bottom - 6), font, 1.2, (255, 255, 255), 1)
+                    cv2.putText(frame, 'Welcome to Delhi Metro Station', (left - 10, bottom + 30), font, 1.2, (255, 255, 255), 1)
+                else:
+                    is_checked_in = Check.query.filter(Check.check_in_time < time_diff).first()
+                    if not is_checked_in:
+                        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+                        cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+                        cv2.putText(frame, 'No Check in! ' + person.username, (left + 6, bottom - 6), font, 1.2, (255, 255, 255), 1)
+                        check = Check(person.id, datetime.now(), 'Delhi')
+                        db.session.add(check)
+                        db.session.commit()
+                    else:
+                        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 255, 0), cv2.FILLED)
+                        cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+                        is_checked_in.on_checkout('HUDA Station', check_time, 5)
+                        cv2.putText(frame, 'Bye! ' + person.username, (left + 6, bottom - 6), font, 1.2, (255, 255, 255), 1)
+                        cv2.putText(frame, 'Thank you for using Delhi Metro System', (left - 10, bottom + 30), font, 1.2, (255, 255, 255), 1)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' +  cv2.imencode('.jpg', frame)[1].tostring() + b'\r\n')
 
 
-@app.route('/detect')
-def detect_face():
-    return Response(detect_person(), mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route('/detect/<status>')
+def detect_face(status):
+    return Response(detect_person(status), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route('/signup', methods=['GET', 'POST'])
