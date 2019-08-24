@@ -10,9 +10,6 @@ from face_dec import get_face
 from face_match import give_match
 import pickle
 
-
-
-
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'mp4']
 
 
