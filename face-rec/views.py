@@ -2,6 +2,7 @@ import os
 import cv2
 from app import app, db
 from models import Face, User
+from forms import LoginForm
 from flask import session, redirect, url_for, render_template, abort, request, flash, Response
 from face_recognition import face_encodings
 from werkzeug.utils import secure_filename
@@ -43,13 +44,10 @@ def index():
     db.session.commit()
     return 'okay'
 
+
 @app.route('/record-face/<user_id>')
 def add_face(user_id):
     return Response(get_frames(user_id), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-@app.route('/signup')
-def signup():
-    return render_template('signup.html')
 
 
 @app.route('/camera')
@@ -66,12 +64,7 @@ def detect_person():
         else:
             new_frame = frame[:, :, ::-1]
             people = give_match(new_frame)
-            print(people)
-            # f = BytesIO()
-            # pickle.dump(face_encodings, f)
-            # if face_encodings is not None:
-            #     face = Face(user_id, f.getbuffer())
-            #     db.session.add(face)
+            person = User.get_by_id(people)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' +  cv2.imencode('.jpg', frame)[1].tostring() + b'\r\n')
 
@@ -79,3 +72,26 @@ def detect_person():
 @app.route('/detect')
 def detect_face():
     return Response(detect_person(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    form = LoginForm()
+    if form.validate_on_submit():
+        username, password = form.username.data, form.password.data
+        user = User.get_by_username(username)
+        if user and user.password == password:
+            return redirect(url_for('dashboard'))
+        else:
+            return render_template('signup.html')
+    return render_template('login.html')
+
+
+@app.route('/dashboard')
+def dashboard():
+    pass
+
+
+@app.route('/assets/<path:path>')
+def send_file(path):
+    return send_from_directory('assets', path)

@@ -4,13 +4,20 @@ from app import db
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.UnicodeText, unique=True)
-    full_name = db.Column(db.UnicodeText)
+    password = db.Column(db.UnicodeText)
     faces = db.relationship('Face', backref='user', lazy=True)
 
-    def __init__(self, username, full_name):
+    def __init__(self, username, password):
         self.username = username
-        self.full_name = full_name
-
+        self.password = password
+    
+    @staticmethod
+    def get_by_id(id):
+        return User.query.filter_by(id=id).first()
+    
+    @staticmethod
+    def get_by_username(username):
+        return User.query.filter_by(username=username).first()
 
 
 class Face(db.Model):
