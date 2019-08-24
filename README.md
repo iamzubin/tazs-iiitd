@@ -12,6 +12,15 @@ Face recognition and blockchain wallet for Public Transport
 The idea is to use face recognition and blockchain (especially matic) to have an automated payment systems for public transports. Imagine Tag based tollways for humans without the need for any hardware / physical cards. You can simply walk in, we'll scan the face and deduct the costs from your eth blockchain wallet.
 
 
+## How to Use
+
+1. Install all dependencies using ```pipenv install``` in the face-rec folder
+2. Install all node dependencies in the matic folder using ```npm install```
+3. Start the python web server using python3 app.py inside the face-rec folder
+4. Register a face at ```localhost:5000/signup```
+5. Test the product at ```localhost:5000/camera-in``` and then ```localhost:5000/camera-out```
+
+
 ## Libraries Used
 
 ### facial recognition
