@@ -1,4 +1,3 @@
-
 var sigUtil = require('eth-sig-util')
 var Eth = require('ethjs')
 window.Eth = Eth
@@ -59,17 +58,16 @@ if (typeof web3 !== 'undefined') {
 ///////////////////////Get the balance of an ETH address////
 
 function GetBalance(address) {
-    var url =  "https://api-ropsten.etherscan.io/" + "api?module=account&action=balance&address=" + address + "&tag=latest&apikey=K8BKKCIBTPMY9DT8RIXETN3VWHNE2DAGH7";
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
-      if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-        console.log("Your balance on Ropsten is: " + round(WeiToEth(JSON.parse(xmlHttp.responseText).result),5));
-        document.getElementById("balance").innerHTML = ("Your balance on Ropsten is: " + round(WeiToEth(JSON.parse(xmlHttp.responseText).result),5));
-        }
-    }
-    xmlHttp.open("GET", url, true); // true for asynchronous 
-    xmlHttp.send(null);
-} 
+  var url =  "https://api-ropsten.etherscan.io/" + "api?module=account&action=balance&address=" + address + "&tag=latest&apikey=K8BKKCIBTPMY9DT8RIXETN3VWHNE2DAGH7";
+  var xmlHttp = new XMLHttpRequest();
+  xmlHttp.onreadystatechange = function() { 
+    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+      console.log("Your balance on Ropsten is: " + round(WeiToEth(JSON.parse(xmlHttp.responseText).result),5));
+      }
+  }
+  xmlHttp.open("GET", url, true); // true for asynchronous 
+  xmlHttp.send(null);
+}
 
 ////////utility functions////////
 
