@@ -107,7 +107,8 @@ def detect_person(status):
                         cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
                         is_checked_in.on_checkout('HUDA Station', check_time, 5)
                         cv2.putText(frame, 'Bye! ' + person.username, (left + 6, bottom - 6), font, 1.2, (255, 255, 255), 1)
-                        cv2.putText(frame, 'Thank you for using Delhi Metro System', (left - 10, bottom + 30), font, 1.2, (255, 255, 255), 1)
+                        cv2.putText(frame, 'Cost: ' + str(5) + 'tokens', (left - 10, bottom + 30), font, 1.2, (255, 255, 255), 1)
+                        cv2.putText(frame, 'Thank you for using Delhi Metro System', (left - 10, bottom + 50), font, 1.2, (255, 255, 255), 1)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' +  cv2.imencode('.jpg', frame)[1].tostring() + b'\r\n')
 
