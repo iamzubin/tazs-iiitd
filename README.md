@@ -3,10 +3,6 @@ Face recognition and blockchain wallet for Public Transport
 ===
 
 
-## Table of Contents
-
-[TOC]
-
 ## Project Description
 
 The idea is to use face recognition and blockchain (especially matic) to have an automated payment systems for public transports. Imagine Tag based tollways for humans without the need for any hardware / physical cards. You can simply walk in, we'll scan the face and deduct the costs from your eth blockchain wallet.
