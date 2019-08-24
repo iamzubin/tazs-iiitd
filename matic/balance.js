@@ -13,7 +13,7 @@ const matic = new Matic({
 matic.wallet = config.PRIVATE_KEY // prefix with `0x`
 
 const tokenAddress = config.MATIC_TEST_TOKEN // token address on mainchain
-const from = config.FROM_ADDRESS // from address
+const from = process.argv[2] // from address
 
 matic.balanceOfERC20(from, tokenAddress, {
   // parent: true, // For token balance on Main network (false for Matic Network)

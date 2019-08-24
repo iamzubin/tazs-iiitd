@@ -12,6 +12,7 @@
   "license": "ISC",
   "homepage": "",
   "dependencies": {
+    "bignumber.js": "^9.0.0",
     "browserify": "^16.2.0",
     "eth-sig-util": "^1.4.2",
     "ethereumjs-util": "^5.1.5",
