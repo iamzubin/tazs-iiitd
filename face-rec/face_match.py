@@ -3,9 +3,10 @@ from PIL import Image
 import numpy as np
 import os
 from models import Face
+import pickle
 
 all_faces = Face.query.all()
-known_faces = [face.face_encoding for face in all_faces]
+known_faces = [pickle.loads(face.face_encoding) for face in all_faces]
 known_faces_names = [face.user.full_name for face in all_faces]
 
 

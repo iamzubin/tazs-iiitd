@@ -8,7 +8,6 @@ from werkzeug.utils import secure_filename
 from face_dec import get_face
 from face_match import give_match
 import pickle
-from io import BytesIO
 
 
 
@@ -29,10 +28,9 @@ def get_frames(user_id):
         else:
             new_frame = frame[:, :, ::-1]
             face_encodings = get_face(new_frame)
-            f = BytesIO()
-            pickle.dump(face_encodings, f)
+            f = pickle.dumps(face_encodings)
             if face_encodings is not None:
-                face = Face(user_id, f.getbuffer())
+                face = Face(user_id, f)
                 db.session.add(face)
                 db.session.commit()
         yield (b'--frame\r\n'

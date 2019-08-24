@@ -3,7 +3,7 @@ from app import db
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.UnicodeText)
+    username = db.Column(db.UnicodeText, unique=True)
     full_name = db.Column(db.UnicodeText)
     faces = db.relationship('Face', backref='user', lazy=True)
 
