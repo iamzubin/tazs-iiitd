@@ -62,12 +62,13 @@ def detect_person():
         else:
             new_frame = frame[:, :, ::-1]
             face_locations, people = give_match(new_frame)
-            person = User.get_by_id(people[0])
-            top, right, bottom, left = face_locations
-            cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
-            cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
-            font = cv2.FONT_HERSHEY_DUPLEX
-            cv2.putText(frame, 'Hi!' + person.username, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+            if people:
+                person = User.get_by_id(people[0])
+                top, right, bottom, left = face_locations[0]
+                cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+                cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+                font = cv2.FONT_HERSHEY_DUPLEX
+                cv2.putText(frame, 'Hi!' + person.username, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' +  cv2.imencode('.jpg', frame)[1].tostring() + b'\r\n')
 
