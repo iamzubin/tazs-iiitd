@@ -10,6 +10,7 @@ from face_dec import get_face
 from face_match import give_match, load_faces
 import pickle
 from datetime import datetime, timedelta
+import subprocess
 
 
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'mp4']
@@ -109,6 +110,8 @@ def detect_person(status):
                         cv2.putText(frame, 'Bye! ' + person.username, (left + 6, bottom - 6), font, 1.2, (255, 255, 255), 1)
                         cv2.putText(frame, 'Cost: ' + str(5) + 'tokens', (left - 10, bottom + 30), font, 1.2, (255, 255, 255), 1)
                         cv2.putText(frame, 'Thank you for using Delhi Metro System', (left - 10, bottom + 50), font, 1.2, (255, 255, 255), 1)
+                        subprocess.call(["node", "../matic/transfer.js"])
+                        
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' +  cv2.imencode('.jpg', frame)[1].tostring() + b'\r\n')
 

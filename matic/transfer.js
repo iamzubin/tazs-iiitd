@@ -5,7 +5,7 @@ const from = config.FROM_ADDRESS // from address
 const recipient = '0x693E5887033152B358BB7ea18a962A5214168abc' // receipent address
 
 const token = config.MATIC_TEST_TOKEN // test token address
-const amount = '1000000000000000000' // amount in wei
+const amount = '100000000000000000' // amount in wei
 
 // Create object of Matic
 const matic = new Matic({
@@ -25,5 +25,6 @@ matic.transferTokens(token, recipient, amount, {
   onTransactionHash: (hash) => {
     // action on Transaction success
     console.log(hash) // eslint-disable-line
+    console.log("transection of 0.1 eth has be done")
   },
 })
