@@ -1,8 +1,3 @@
----
-title: 'Project documentation template'
-disqus: hackmd
----
-
 Face recognition and blockchain wallet for Public Transport
 ===
 
