@@ -62,7 +62,7 @@ def detect_person():
         else:
             new_frame = frame[:, :, ::-1]
             people = give_match(new_frame)
-            person = User.get_by_id(people)
+            person = User.get_by_id(people[0])
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' +  cv2.imencode('.jpg', frame)[1].tostring() + b'\r\n')
 
@@ -77,12 +77,16 @@ def signup():
     form = LoginForm()
     if form.validate_on_submit():
         username, password = form.username.data, form.password.data
+        print(username, password)
         user = User.get_by_username(username)
         if user and user.password == password:
             return redirect(url_for('dashboard'))
         else:
-            return render_template('signup.html')
-    return render_template('login.html')
+            new_user = User(username, password)
+            db.session.add(new_user)
+            db.session.commit()
+            return render_template('signup.html', user_id=new_user.id)
+    return render_template('login.html', form=form)
 
 
 @app.route('/dashboard')

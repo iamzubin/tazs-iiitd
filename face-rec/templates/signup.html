@@ -75,7 +75,7 @@
       <!--   you can change the color of the filter page using: data-color="blue | purple | green | orange | red | rose " -->
       <div class="container">
             <h2>Video Streaming Demonstration</h2>
-            <img src="{{ url_for('add_face') }}">
+            <img src="{{ url_for('add_face', user_id=user_id) }}">
           </div>
       <footer class="footer">
         <div class="container">
@@ -114,7 +114,7 @@
       </footer>
     </div>
   </div>
-  <script>setTimeout(function(){window.location.href="/"},4000);</script>
+  <script>setTimeout(function(){window.location.href="{{ url_for('dashboard') }}"},8000);</script>
   <!--   Core JS Files   -->
   <script src="assets/js/core/jquery.min.js"></script>
   <script src="assets/js/core/popper.min.js"></script>
