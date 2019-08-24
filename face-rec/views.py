@@ -112,7 +112,7 @@ def detect_person(status):
                             db.session.add(is_checked_in)
                             db.session.commit()
                         cv2.putText(frame, 'Bye! ' + person.username, (left + 6, bottom - 6), font, 1.2, (255, 255, 255), 1)
-                        cv2.putText(frame, 'Cost: ' + str(5) + 'tokens', (left - 10, bottom + 30), font, 1.2, (255, 255, 255), 1)
+                        cv2.putText(frame, 'Cost: ' + str(0.1) + 'tokens', (left - 10, bottom + 30), font, 1.2, (255, 255, 255), 1)
                         cv2.putText(frame, 'Thank you for using Delhi Metro System', (left - 10, bottom + 50), font, 1.2, (255, 255, 255), 1)
                         
         yield (b'--frame\r\n'
