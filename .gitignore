@@ -104,4 +104,4 @@ venv.bak/
 .mypy_cache/
 
 # node 
-matic/node_modules
+matic/node_modules/
