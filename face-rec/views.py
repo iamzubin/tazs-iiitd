@@ -106,11 +106,14 @@ def detect_person(status):
                     else:
                         cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 255, 0), cv2.FILLED)
                         cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
-                        is_checked_in.on_checkout('HUDA Station', check_time, 5)
+                        if not is_checked_in.cost:
+                            is_checked_in.on_checkout('HUDA Station', check_time, 5)
+                            subprocess.call(["node", "../matic/transfer.js"])
+                            db.session.add(is_checked_in)
+                            db.session.commit()
                         cv2.putText(frame, 'Bye! ' + person.username, (left + 6, bottom - 6), font, 1.2, (255, 255, 255), 1)
                         cv2.putText(frame, 'Cost: ' + str(5) + 'tokens', (left - 10, bottom + 30), font, 1.2, (255, 255, 255), 1)
                         cv2.putText(frame, 'Thank you for using Delhi Metro System', (left - 10, bottom + 50), font, 1.2, (255, 255, 255), 1)
-                        subprocess.call(["node", "../matic/transfer.js"])
                         
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' +  cv2.imencode('.jpg', frame)[1].tostring() + b'\r\n')
@@ -139,7 +142,8 @@ def signup():
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template("admin.html")
+    balance  = subprocess.check_output(["node", "../matic/balance.js"]).decode('utf8')
+    return render_template("admin.html", balance=balance)
 
 
 @app.route('/assets/<path:path>')
