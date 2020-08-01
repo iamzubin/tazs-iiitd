@@ -5,6 +5,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.UnicodeText, unique=True)
     password = db.Column(db.UnicodeText)
+    balance = db.Column(db.Integer)
     faces = db.relationship('Face', backref='user', lazy=True)
     checks = db.relationship('Check', backref='user', lazy=True)
 

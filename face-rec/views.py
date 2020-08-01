@@ -44,7 +44,7 @@ def get_frames(user_id):
 
 @app.route('/')
 def index():
-    user = User('nigga', 'Test Nigga')
+    user = User('test_user', 'Test User')
     db.session.add(user)
     db.session.commit()
     return 'okay'
@@ -108,7 +108,9 @@ def detect_person(status):
                         cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
                         if not is_checked_in.cost:
                             is_checked_in.on_checkout('HUDA Station', check_time, 5)
-                            subprocess.call(["node", "../matic/transfer.js"])
+                            # subprocess.call(["node", "../matic/transfer.js"])
+                            # deduct the balance
+                            
                             db.session.add(is_checked_in)
                             db.session.commit()
                         cv2.putText(frame, 'Bye! ' + person.username, (left + 6, bottom - 6), font, 1.2, (255, 255, 255), 1)
@@ -133,7 +135,7 @@ def signup():
         if user and user.password == password:
             return redirect(url_for('dashboard'))
         else:
-            new_user = User(username, password)
+            new_user = User(username, password) # initiate balance
             db.session.add(new_user)
             db.session.commit()
             return render_template('signup.html', user_id=new_user.id)
@@ -142,7 +144,7 @@ def signup():
 
 @app.route('/dashboard')
 def dashboard():
-    balance  = subprocess.check_output(["node", "../matic/balance.js"]).decode('utf8')
+    balance  = User.get_by_username(username) # check balance from the db
     return render_template("admin.html", balance=balance)
 
 
